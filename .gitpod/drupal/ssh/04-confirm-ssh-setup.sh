@@ -10,15 +10,22 @@ SSHKey=$(ssh-keyscan $host 2> /dev/null)
 echo "$SSHKey" >> ~/.ssh/known_hosts
 
 # Ask for SSH keyphrase only once
-if ssh-add -l > /dev/null ; then
-    eval "$(ssh-agent -s)" > /dev/null
-    ssh-add -q ~/.ssh/id_rsa
+ssh-add -l &> /dev/null
+ssh_status="$?"
+if [ "$ssh_status" != 0 ]; then
+    if [ "$ssh_status" = 2 ]; then
+        >&2 echo "Could not find a valid SSH agent session. Please create one first!"
+        >&2 echo "Run: source .gitpod/utils/start-ssh-agent.sh"
+        exit 1
+    else
+        ssh-add -q ~/.ssh/id_rsa
+    fi
 fi
 
 # Validate private SSH key in Gitpod with public SSH key in drupal.org
 if ssh -T git@git.drupal.org; then
-    echo "Setup was succesful, saving your private key in Gitpod"
-    # Set private SSH key as Gitpod variable anvironment
+    echo "Setup was successful, saving your private key in Gitpod"
+    # Set private SSH key as Gitpod variable environment
     gp env "DRUPAL_SSH_KEY=$(cat ~/.ssh/id_rsa)" > /dev/null
     # Copy key to /workspace in case this workspace times out
     cp ~/.ssh/id_rsa /workspace/.

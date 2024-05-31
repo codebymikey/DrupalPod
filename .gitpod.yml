@@ -13,6 +13,7 @@ tasks:
       if [ "$GITPOD_REPO_ROOT" == '/workspace' ]; then
         export GITPOD_REPO_ROOT="$THEIA_WORKSPACE_ROOT"
       fi
+      source .gitpod/utils/start-ssh-agent.sh
       .gitpod/utils/ddev-in-gitpod-setup.sh
       .gitpod/utils/env-setup.sh
       .gitpod/drupal/ssh/01-check-private-ssh.sh
