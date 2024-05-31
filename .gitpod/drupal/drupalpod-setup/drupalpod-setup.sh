@@ -5,6 +5,8 @@ set -eu -o pipefail
 : "${DEBUG_SCRIPT:=}"
 : "${GITPOD_HEADLESS:=}"
 : "${DP_INSTALL_PROFILE:=}"
+: "${DP_INSTALL_SITENAME:=DrupalPod}"
+: "${DP_INSTALL_OPTIONS:=}"
 : "${DP_EXTRA_DEVEL:=}"
 : "${DP_EXTRA_ADMIN_TOOLBAR:=}"
 : "${DP_PROJECT_TYPE:=}"
@@ -84,6 +86,9 @@ if [ ! -f "${GITPOD_REPO_ROOT}"/.drupalpod_initiated ]; then
 
     time "${GITPOD_REPO_ROOT}"/.gitpod/drupal/install-essential-packages.sh
 
+    # Go back to the gitpod repo root.
+    cd "$GITPOD_REPO_ROOT"
+
     # Configure phpcs for drupal if it's not already set up by the
     # dealerdirect/phpcodesniffer-composer-installer composer plugin.
     if ! ddev phpcs --config-show | \grep -q 'installed_paths:'; then
@@ -92,32 +97,39 @@ if [ ! -f "${GITPOD_REPO_ROOT}"/.drupalpod_initiated ]; then
 
     # ddev config auto updates settings.php and generates settings.ddev.php
     ddev config --auto
-    # New site install
-    time ddev drush si -y --account-pass=admin --site-name="DrupalPod" "$DP_INSTALL_PROFILE"
 
-    # Install devel and admin_toolbar modules
-    if [ "$DP_EXTRA_DEVEL" != '1' ]; then
-        DEVEL_NAME=
-    fi
-    if [ "$DP_EXTRA_ADMIN_TOOLBAR" != '1' ]; then
-        ADMIN_TOOLBAR_NAME=
-    fi
+    if [ -n "$DP_INSTALL_PROFILE" ] && [ "$DP_INSTALL_PROFILE" != "''" ]; then
+        # New site install
+        time ddev drush si -y --account-pass=admin --site-name="$DP_INSTALL_SITENAME" "$DP_INSTALL_PROFILE" $DP_INSTALL_OPTIONS
 
-    # Enable extra modules
-    cd "${GITPOD_REPO_ROOT}" &&
-        ddev drush en -y \
-            "$ADMIN_TOOLBAR_NAME" \
-            "$DEVEL_NAME"
+        # Install devel and admin_toolbar modules
+        if [ "$DP_EXTRA_DEVEL" != '1' ]; then
+            DEVEL_NAME=
+        fi
+        if [ "$DP_EXTRA_ADMIN_TOOLBAR" != '1' ]; then
+            ADMIN_TOOLBAR_NAME=
+        fi
 
-    # Enable the requested module
-    if [ "$DP_PROJECT_TYPE" == "project_module" ]; then
-        cd "${GITPOD_REPO_ROOT}" && ddev drush en -y "$DP_PROJECT_NAME"
-    fi
+        if [ -n "$ADMIN_TOOLBAR_NAME" ] || [ -n "$DEVEL_NAME" ]; then
+            # Enable extra modules
+            cd "${GITPOD_REPO_ROOT}" &&
+                ddev drush en -y \
+                    "$ADMIN_TOOLBAR_NAME" \
+                    "$DEVEL_NAME"
+        fi
 
-    # Enable the requested theme
-    if [ "$DP_PROJECT_TYPE" == "project_theme" ]; then
-        cd "${GITPOD_REPO_ROOT}" && ddev drush then -y "$DP_PROJECT_NAME"
-        cd "${GITPOD_REPO_ROOT}" && ddev drush config-set -y system.theme default "$DP_PROJECT_NAME"
+        # Enable the requested module
+        if [ "$DP_PROJECT_TYPE" == "project_module" ]; then
+            cd "${GITPOD_REPO_ROOT}" && ddev drush en -y "$DP_PROJECT_NAME"
+        fi
+
+        # Enable the requested theme
+        if [ "$DP_PROJECT_TYPE" == "project_theme" ]; then
+            cd "${GITPOD_REPO_ROOT}" && ddev drush then -y "$DP_PROJECT_NAME"
+            cd "${GITPOD_REPO_ROOT}" && ddev drush config-set -y system.theme default "$DP_PROJECT_NAME"
+        fi
+    else
+        echo "No install profile was specified, so skipping installation."
     fi
 
     # Take a snapshot
