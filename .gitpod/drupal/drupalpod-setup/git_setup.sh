@@ -9,6 +9,15 @@ if [ -z "$GITPOD_HEADLESS" ]; then
     echo "$SSHKey" >>~/.ssh/known_hosts
 fi
 
+# Set the default git commit user and email if the environment variable exists.
+# Workaround for https://github.com/gitpod-io/gitpod/issues/1800
+if [ -n "${GIT_COMMITTER_NAME:-}" ]; then
+    git config --global user.name "${GIT_COMMITTER_NAME}"
+fi
+if [ -n "${GIT_COMMITTER_EMAIL:-}" ]; then
+    git config --global user.email "${GIT_COMMITTER_EMAIL}"
+fi
+
 # Ignore specific directories during Drupal core development
 cp "${GITPOD_REPO_ROOT}"/.gitpod/drupal/templates/git-exclude.template "${GITPOD_REPO_ROOT}"/.git/info/exclude
 
