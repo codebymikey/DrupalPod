@@ -31,6 +31,17 @@ ddev composer config --no-plugins allow-plugins.mglaman/composer-drupal-lenient 
 
 ddev composer config --no-plugins allow-plugins.php-http/discovery true
 
+if [ "${INCLUDE_COMPOSER_MERGE-1}" = 1 ] && [ "$DP_PROJECT_TYPE" != "project_core" ]; then
+    if [ -f "$GITPOD_REPO_ROOT/repos/${DP_PROJECT_NAME}/composer.json" ] || [ -f "$GITPOD_REPO_ROOT/repos/${DP_PROJECT_NAME}/composer.libraries.json" ]; then
+        # Integrate composer-merge-plugin so that optional require-dev dependencies are also included.
+        # Necessary for testing modules like paragraphs.
+        cd "${GITPOD_REPO_ROOT}" && time ddev . composer require wikimedia/composer-merge-plugin:2.1.0 --no-interaction --no-install
+        cd "${GITPOD_REPO_ROOT}" && time ddev . composer config --no-plugins allow-plugins.wikimedia/composer-merge-plugin true
+        # Add the composer.json and potential composer.libraries dependency.
+        cd "${GITPOD_REPO_ROOT}" && time ddev . composer config --json extra.merge-plugin.include '["\"repos/'"$DP_PROJECT_NAME"'/composer.json\", \"repos/'"$DP_PROJECT_NAME"'/composer.libraries.json\""]'
+    fi
+fi
+
 # Add project source code as symlink (to repos/name_of_project)
 # double quotes explained - https://stackoverflow.com/a/1250279/5754049
 if [ -n "$DP_PROJECT_NAME" ]; then

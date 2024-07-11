@@ -17,8 +17,8 @@ services:
       SYMFONY_DEPRECATIONS_HELPER: weak
       SIMPLETEST_DB: mysql://db:db@db:3306/db
       SIMPLETEST_BASE_URL: http://web
-      BROWSERTEST_OUTPUT_DIRECTORY: /var/www/html/private/browsertest_output
-      BROWSERTEST_OUTPUT_BASE_URL: $DDEV_PRIMARY_URL
+      BROWSERTEST_OUTPUT_DIRECTORY: /var/www/html/web/sites/simpletest/browser_output
+      BROWSERTEST_OUTPUT_BASE_URL: http://localhost:8080 # $DDEV_PRIMARY_URL
       MINK_DRIVER_ARGS_WEBDRIVER: >-
         [
         "chrome",
