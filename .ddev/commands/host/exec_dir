@@ -5,11 +5,15 @@
 ## Example: "ddev exec_d yarn"
 
 if [ -z "$1" ]; then
-  echo "No argument supplied"
+  >&2 echo "No argument supplied"
   exit 1
 fi
 
-if [ "${GITPOD_NORMALIZE_EXEC_ARGUMENTS:-1}" = 1 ] && [ -n "${GITPOD_REPO_ROOT}" ]; then
+if [ "${DP_DDEV_EXEC_WARNING-0}" = 1 ]; then
+  >&2 echo "Notice: running '$*' in ddev"
+fi
+
+if [ "${DP_NORMALIZE_EXEC_ARGUMENTS-1}" = 1 ] && [ -n "${GITPOD_REPO_ROOT}" ]; then
   # Replace all references to the absolute path to the repo root.
   # This will ensure IDEs like PHPStorm can pass files into it without issue.
   arguments=()

@@ -4,7 +4,7 @@ if [ -n "$DEBUG_SCRIPT" ]; then
 fi
 
 if [ ! -x ~/.projector/configs/PhpStorm/run.sh ]; then
-  echo "PhpStorm runner not found" && exit 1
+  >&2 echo "PhpStorm runner not found" && exit 1
 fi
 
 # When port 9999 is ready - open that port in a new browser tab
