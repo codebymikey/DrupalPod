@@ -29,6 +29,8 @@ ddev composer config --no-plugins allow-plugins.phpstan/extension-installer true
 
 ddev composer config --no-plugins allow-plugins.mglaman/composer-drupal-lenient true
 
+ddev composer config --no-plugins allow-plugins.tbachert/spi true
+
 ddev composer config --no-plugins allow-plugins.php-http/discovery true
 
 if [ "${INCLUDE_COMPOSER_MERGE-1}" = 1 ] && [ "$DP_PROJECT_TYPE" != "project_core" ]; then
@@ -40,6 +42,13 @@ if [ "${INCLUDE_COMPOSER_MERGE-1}" = 1 ] && [ "$DP_PROJECT_TYPE" != "project_cor
         # Add the composer.json and potential composer.libraries dependency.
         cd "${GITPOD_REPO_ROOT}" && time ddev . composer config --json extra.merge-plugin.include '["\"repos/'"$DP_PROJECT_NAME"'/composer.json\", \"repos/'"$DP_PROJECT_NAME"'/composer.libraries.json\""]'
     fi
+fi
+
+if [ "${DP_DORGFLOW_SUPPORT-0}" = 1 ]; then
+    # Install dorgflow.
+    cd "${GITPOD_REPO_ROOT}"
+    time ddev . composer config --no-plugins allow-plugins.lakedrops/dorgflow true
+    time ddev . composer require lakedrops/dorgflow --no-interaction --no-install
 fi
 
 # Add project source code as symlink (to repos/name_of_project)

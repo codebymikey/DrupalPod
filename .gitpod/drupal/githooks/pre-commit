@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+if [ "${DP_PRECOMMIT:-true}" != true ]; then
+  exit
+fi
+
+if [ "${DP_PRECOMMIT_LINT:-true}" = true ]; then
+  # Run the code beautifier script.
+  ddev phpcbf
+  if ! ddev phpcs; then
+    echo >&2 "Linter issues found - please review and fix them before committing."
+    exit 1
+  fi
+fi
+
+if [ "${DP_PRECOMMIT_TEST:-true}" = true ]; then
+  # Check for test files.
+  if git rev-parse --verify HEAD; then
+    against=HEAD
+  else
+    # Initial commit: diff against an empty tree object
+    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+  fi
+  FILES=$(git diff-index --name-only --cached --diff-filter=ACMR $against -- | grep -E "Test.php$")
+  for test in $FILES; do
+    phpunit -c core "$test" --log-junit="/var/www/html/web/sites/default/files/simpletest/phpunit-$(echo "$test"|sed 's/\//_/g').xml";
+  done;
+fi

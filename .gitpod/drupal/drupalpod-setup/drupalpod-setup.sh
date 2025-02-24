@@ -28,6 +28,15 @@ if [ -n "$DEBUG_SCRIPT" ] || [ -n "$GITPOD_HEADLESS" ]; then
     set -x
 fi
 
+# Set the default git commit user and email if the environment variable exists.
+# Workaround for https://github.com/gitpod-io/gitpod/issues/1800
+if [ -n "${GIT_COMMITTER_NAME:-}" ]; then
+    git config --global user.name "${GIT_COMMITTER_NAME}"
+fi
+if [ -n "${GIT_COMMITTER_EMAIL:-}" ]; then
+    git config --global user.email "${GIT_COMMITTER_EMAIL}"
+fi
+
 convert_version() {
     local version=$1
     if [[ $version =~ "-" ]]; then
@@ -89,12 +98,6 @@ if [ ! -f "${GITPOD_REPO_ROOT}"/.drupalpod_initiated ]; then
     # Go back to the gitpod repo root.
     cd "$GITPOD_REPO_ROOT"
 
-    # Configure phpcs for drupal if it's not already set up by the
-    # dealerdirect/phpcodesniffer-composer-installer composer plugin.
-    if ! ddev phpcs --config-show | \grep -q 'installed_paths:'; then
-        ddev phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
-    fi
-
     # ddev config auto updates settings.php and generates settings.ddev.php
     ddev config --auto
 
@@ -125,8 +128,18 @@ if [ ! -f "${GITPOD_REPO_ROOT}"/.drupalpod_initiated ]; then
 
         # Enable the requested theme
         if [ "$DP_PROJECT_TYPE" == "project_theme" ]; then
-            cd "${GITPOD_REPO_ROOT}" && ddev drush then -y "$DP_PROJECT_NAME"
+            cd "${GITPOD_REPO_ROOT}" && ddev drush theme-enable -y "$DP_PROJECT_NAME"
             cd "${GITPOD_REPO_ROOT}" && ddev drush config-set -y system.theme default "$DP_PROJECT_NAME"
+        fi
+
+        # Configure automatic updates.
+        if [ "${AUTOMATIC_UPDATES:-}" == "true" ]; then
+            cd "${GITPOD_REPO_ROOT}"
+            ddev drush en -y project_browser package_manager
+            ddev drush en -y navigation || true
+            ddev drush cset -y package_manager.settings include_unknown_files_in_project_root true
+            ddev drush cset -y project_browser.admin_settings allow_ui_install true
+            ddev drush cset -y --input-format=yaml package_manager.settings additional_trusted_composer_plugins \[tbachert/spi\]
         fi
     else
         echo "No install profile was specified, so skipping installation."

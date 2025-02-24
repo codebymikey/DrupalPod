@@ -35,11 +35,14 @@ sudo cp ddev-yarn.template.sh /usr/local/bin/yarn
 # Create composer command (run composer inside ddev container)
 sudo cp ddev-composer.template.sh /usr/local/bin/composer
 
-# Create node command (run composer inside ddev container)
+# Create node command (run node inside ddev container)
 sudo cp ddev-node.template.sh /usr/local/bin/node
 
-# Create nvm command (run composer inside ddev container)
+# Create nvm command (run nvm inside ddev container)
 sudo cp ddev-nvm.template.sh /usr/local/bin/nvm
 
-# Create npx command (run composer inside ddev container)
+# Create npx command (run npx inside ddev container)
 sudo cp ddev-npx.template.sh /usr/local/bin/npx
+
+# Create npx command (run npm inside ddev container)
+sudo cp ddev-npm.template.sh /usr/local/bin/npm

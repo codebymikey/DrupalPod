@@ -5,3 +5,6 @@ services:
     ports:
       - 3000:3000
       - 5000:5000
+  selenium-chrome:
+    ports:
+      - 7900:7900

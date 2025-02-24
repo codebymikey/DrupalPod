@@ -4,16 +4,18 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.tabSize": 2,
   "editor.autoIndent": "full",
-  "editor.insertSpaces": true,
-  "editor.formatOnPaste": true,
-  "editor.formatOnSave": false,
   "editor.renderWhitespace": "boundary",
   "editor.wordWrapColumn": 80,
   "editor.wordWrap": "off",
-  "editor.detectIndentation": true,
   "editor.rulers": [
     80
   ],
+  "editor.detectIndentation": true,
+  "editor.insertSpaces": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": false,
+  "files.trimTrailingWhitespace": false,
+  "files.insertFinalNewline": true,
   "files.associations": {
     "*.inc": "php",
     "*.module": "php",
@@ -29,8 +31,6 @@
   "emmet.includeLanguages": {
     "twig": "html"
   },
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
   "html.format.enable": true,
   "html.format.wrapLineLength": 80,
   "redhat.telemetry.enabled": false,

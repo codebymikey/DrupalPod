@@ -13,6 +13,11 @@ tasks:
       if [ "$GITPOD_REPO_ROOT" == '/workspace' ]; then
         export GITPOD_REPO_ROOT="$THEIA_WORKSPACE_ROOT"
       fi
+      if [ "${WEBDRIVER_NO_HEADLESS:-}" == 'true' ]; then
+        # If using VNC integration, automatically strip out the headless argument by setting it to an empty string.
+        # https://github.com/ddev/ddev-selenium-standalone-chrome?tab=readme-ov-file#the-easy-way-use-novnc-built-in
+        export CHROME_HEADLESS_ARG= CHROME_HEADLESS_JSON_ARG=
+      fi
       source .gitpod/utils/start-ssh-agent.sh
       .gitpod/utils/ddev-in-gitpod-setup.sh
       .gitpod/utils/env-setup.sh
@@ -76,3 +81,8 @@ ports:
     name: xdebug
     description: xdebug
     onOpen: ignore
+  # VNC port
+  - port: 7900
+    name: VNC
+    description: https://github.com/ddev/ddev-selenium-standalone-chrome
+    onOpen: notify

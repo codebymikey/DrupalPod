@@ -29,4 +29,4 @@ else
 fi
 
 # Send a message through IFTTT
-curl -X POST -H "Content-Type: application/json" -d "{\"value1\":\"$branch_user\",\"value2\":\"$message\"}" https://maker.ifttt.com/trigger/drupalpod_prebuild_initiated/with/key/"$IFTTT_TOKEN"
+#curl -X POST -H "Content-Type: application/json" -d "{\"value1\":\"$branch_user\",\"value2\":\"$message\"}" https://maker.ifttt.com/trigger/drupalpod_prebuild_initiated/with/key/"$IFTTT_TOKEN"
