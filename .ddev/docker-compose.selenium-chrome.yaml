@@ -48,7 +48,7 @@ services:
             "browserName": "chrome",
             "goog:chromeOptions": {
               "w3c": false,
-              "args": ["--disable-gpu","--no-sandbox","--disable-dev-shm-usage"${CHROME_HEADLESS_JSON_ARG-,\"--headless\"}]
+              "args": ["--disable-gpu","--no-sandbox","--disable-dev-shm-usage"${CHROME_HEADLESS_JSON_ARG-,"--headless"}]
             }
           },
           "http://selenium-chrome:4444/wd/hub"
@@ -67,3 +67,4 @@ services:
       # DTT
       DTT_BASE_URL: http://web
       DTT_MINK_DRIVER_ARGS: *web_driver_args
+      MINK_DRIVER_ARGS: *web_driver_args

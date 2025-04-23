@@ -30,9 +30,3 @@ if [ "${AUTOMATIC_UPDATES:-}" == "true" ]; then
 fi
 # Add the project to composer (it will get the version according to the branch under `/repo/name_of_project`)
 cd "${GITPOD_REPO_ROOT}" && time ddev . composer require drupal/"$DP_PROJECT_NAME" --no-interaction --no-install
-
-if [ ! -f "${GITPOD_REPO_ROOT}/web/phpunit.xml" ]; then
-    # Update phpunit.xml
-    sed -E 's@(failOnWarning|displayDetailsOnTestsThatTriggerErrors|displayDetailsOnTestsThatTriggerWarnings|displayDetailsOnTestsThatTriggerDeprecations)="true"@\1="false"@' \
-        "${GITPOD_REPO_ROOT}/web/core/phpunit.xml.dist" > "${GITPOD_REPO_ROOT}/phpunit.xml"
-fi

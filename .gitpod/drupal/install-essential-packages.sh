@@ -50,3 +50,9 @@ else
     echo "$(cat composer.json | jq '.scripts."post-update-cmd" |= . + ["repos/add-project-as-symlink.sh"]')" >composer.json
     time repos/add-project-as-symlink.sh
 fi
+
+if [ -f "${GITPOD_REPO_ROOT}/web/core/phpunit.xml.dist" ] && [ ! -f "${GITPOD_REPO_ROOT}/web/phpunit.xml" ]; then
+    # Update phpunit.xml
+    sed -E 's@(failOnWarning|displayDetailsOnTestsThatTriggerErrors|displayDetailsOnTestsThatTriggerWarnings|displayDetailsOnTestsThatTriggerDeprecations)="true"@\1="false"@' \
+        "${GITPOD_REPO_ROOT}/web/core/phpunit.xml.dist" > "${GITPOD_REPO_ROOT}/phpunit.xml"
+fi

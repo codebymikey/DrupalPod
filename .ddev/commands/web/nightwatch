@@ -4,10 +4,13 @@
 ## Usage: nightwatch [flags] [args]
 ## Example: "ddev nightwatch" or "ddev nightwatch --tag core"
 
+cd /var/www/html/web/core || exit 2
+if command -v corepack > /dev/null; then
+  corepack enable
+fi
 # Installs dependencies if not already run.
-if [ ! -d /var/www/html/web/core/node_modules ]; then
-  yarn --cwd /var/www/html/web/core install
+if [ ! -d node_modules ]; then
+  yarn install
 fi
 
-yarn --cwd /var/www/html/web/core test:nightwatch $@
-
+yarn test:nightwatch "$@"
