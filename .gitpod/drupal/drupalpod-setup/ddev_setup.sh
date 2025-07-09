@@ -5,8 +5,10 @@ set -eu -o pipefail
 major_version=$(echo "$DP_CORE_VERSION" | cut -d '.' -f 1)
 minor_version=$(echo "$DP_CORE_VERSION" | cut -d '.' -f 2)
 
+if (( major_version < 10 )); then
+    php_version="8.1"
 # Before Drupal 10.2, we should use php 8.2, otherwise use php 8.3
-if (( major_version < 10 )) || { (( major_version == 10 )) && (( minor_version < 2 )); }; then
+elif { (( major_version == 10 )) && (( minor_version < 2 )); }; then
     php_version="8.2"
 else
     php_version="8.3"
@@ -15,6 +17,12 @@ fi
 cat <<CONFIGEND > "${GITPOD_REPO_ROOT}"/.ddev/config.gitpod.yaml
 #ddev-gitpod-generated
 php_version: "$php_version"
+CONFIGEND
+
+cat <<CONFIGEND > "${GITPOD_REPO_ROOT}"/.env
+#ddev-gitpod-generated
+# Useful if you need to test with Drupal running on a subdirectory.
+# DP_WEB_FOLDER=/subfolder
 CONFIGEND
 
 time ddev start

@@ -8,4 +8,11 @@ mkdir -p /var/www/html/web/sites/simpletest/browser_output
 
 cd web
 
-php /var/www/html/vendor/bin/phpunit -c /var/www/html/web/core/phpunit.xml.dist "$@"
+if [ -f /var/www/html/phpunit.xml ]; then
+  phpunit_file=phpunit.xml
+else
+  # Fallback to the one within core.
+  phpunit_file=web/core/phpunit.xml.dist
+fi
+
+php /var/www/html/vendor/bin/phpunit -c "/var/www/html/$phpunit_file" "$@"

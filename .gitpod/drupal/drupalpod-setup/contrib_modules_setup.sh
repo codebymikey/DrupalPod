@@ -12,20 +12,18 @@ export ADMIN_TOOLBAR_PACKAGE="drupal/admin_toolbar"
 export DP_EXTRA_DEVEL=1
 export DP_EXTRA_ADMIN_TOOLBAR=1
 
-# Adding support for composer-drupal-lenient - https://packagist.org/packages/mglaman/composer-drupal-lenient
-if [[ "$DP_CORE_VERSION" =~ ^10(\..*)?$ ]]; then
-    if [ "$DP_PROJECT_TYPE" != "project_core" ]; then
-        export COMPOSER_DRUPAL_LENIENT=mglaman/composer-drupal-lenient
-    else
-        export COMPOSER_DRUPAL_LENIENT=''
-    fi
-fi
+# set PHP version, based on https://www.drupal.org/docs/getting-started/system-requirements/php-requirements#versions
+major_version=$(echo "$DP_CORE_VERSION" | cut -d '.' -f 1)
+minor_version=$(echo "$DP_CORE_VERSION" | cut -d '.' -f 2)
 
 # Adding support for composer-drupal-lenient - https://packagist.org/packages/mglaman/composer-drupal-lenient
-if [[ "$DP_CORE_VERSION" =~ ^11(\..*)?$ ]]; then
-    # admin_toolbar and devel are not compatible yet with Drupal 11
-    export DP_EXTRA_ADMIN_TOOLBAR=
-    export DP_EXTRA_DEVEL=
+if (( major_version >= 10 )); then
+    #if (( major_version >= 12 )); then
+    #    # admin_toolbar and devel are not compatible yet with Drupal 12
+    #    export DP_EXTRA_ADMIN_TOOLBAR=
+    #    export DP_EXTRA_DEVEL=
+    #fi
+
     if [ "$DP_PROJECT_TYPE" != "project_core" ]; then
         export COMPOSER_DRUPAL_LENIENT=mglaman/composer-drupal-lenient
     else

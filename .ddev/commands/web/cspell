@@ -1,0 +1,49 @@
+#!/bin/bash
+
+## Description: Run cspell
+## Usage: cspell [flags] [args]
+## Example: "ddev cspell" or "ddev cspell [project-dir]"
+
+cd /var/www/html/web/core || exit 2
+if command -v corepack > /dev/null; then
+  corepack enable
+fi
+# Installs dependencies if not already run.
+if [ ! -f node_modules/.bin/cspell ]; then
+  yarn install
+fi
+
+cd /var/www/html || exit 2
+
+if [ ! -f /var/www/html/.cspell.json ]; then
+  if [ ! -f /var/www/html/prepare-cspell.php ]; then
+    curl -L https://git.drupalcode.org/project/gitlab_templates/-/raw/main/scripts/prepare-cspell.php -o /var/www/html/prepare-cspell.php
+  fi
+  curl -L https://git.drupalcode.org/project/gitlab_templates/-/raw/main/assets/.cspell.json -o /var/www/html/.cspell.json
+  _CSPELL_DICTIONARY=${_CSPELL_DICTIONARY:-.cspell-project-words.txt}
+  if [ ! -f "$_CSPELL_DICTIONARY" ]; then
+    # Pick up the correct cspell dictionary.
+    _CSPELL_DICTIONARY=$(find . -name "$_CSPELL_DICTIONARY" -print -quit)
+  fi
+  export _CSPELL_DICTIONARY
+  php /var/www/html/prepare-cspell.php
+  rm -rf /var/www/html/prepare-cspell.php
+fi
+
+# cspell has issues with symlinks, so attempt to resolve them.
+# see https://www.drupal.org/project/gitlab_templates/issues/3422323#comment-15458660
+new_args=()
+# Iterate over each positional argument
+for arg in "$@"; do
+  if [ -e "$arg" ]; then
+    abs_path=$(realpath "$arg")
+    new_args+=("$abs_path")
+  else
+      new_args+=("$arg")
+  fi
+done
+# Replace positional arguments with the new ones
+set -- "${new_args[@]}"
+
+# set -x
+/var/www/html/web/core/node_modules/.bin/cspell -c /var/www/html/.cspell.json --show-suggestions --show-context "$@"

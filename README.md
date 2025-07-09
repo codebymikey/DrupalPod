@@ -18,6 +18,7 @@ No computer is needed because it is all running in the cloud.
 * IDE in a browser
   * VScode (default)
   * PHPStorm - run `phpstorm`
+* https://github.com/ddev/ddev-drupal-contrib
 
 <br>
 

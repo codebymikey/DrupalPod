@@ -17,6 +17,9 @@ sudo cp protect-my-git.template.sh /usr/local/bin/protect-my-git
 # Create php command (run php inside ddev container)
 sudo cp ddev-php.template.sh /usr/local/bin/php
 
+# Create cspell command (run cspell inside ddev container)
+sudo cp ddev-cspell.template.sh /usr/local/bin/cspell
+
 # Create phpunit command (run phpunit inside ddev container)
 sudo cp ddev-phpunit.template.sh /usr/local/bin/phpunit
 

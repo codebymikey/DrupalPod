@@ -35,8 +35,8 @@ services:
       # PHPUnit
       SYMFONY_DEPRECATIONS_HELPER: weak
       BROWSERTEST_OUTPUT_DIRECTORY: /tmp
-      BROWSERTEST_OUTPUT_BASE_URL: ${DDEV_PRIMARY_URL}
-      SIMPLETEST_BASE_URL: http://web
+      BROWSERTEST_OUTPUT_BASE_URL: "${DP_WEB_URL:-${DDEV_PRIMARY_URL}}"
+      SIMPLETEST_BASE_URL: &test_url "http://web${DP_WEB_FOLDER-}"
       SIMPLETEST_DB: mysql://db:db@db/db
       # Use disable-dev-shm-usage instead of setting shm_usage
       # https://developers.google.com/web/tools/puppeteer/troubleshooting#tips
@@ -54,7 +54,7 @@ services:
           "http://selenium-chrome:4444/wd/hub"
         ]
       # Nightwatch
-      DRUPAL_TEST_BASE_URL: http://web
+      DRUPAL_TEST_BASE_URL: *test_url
       DRUPAL_TEST_DB_URL: mysql://db:db@db/db
       DRUPAL_TEST_WEBDRIVER_HOSTNAME: selenium-chrome
       DRUPAL_TEST_WEBDRIVER_PORT: 4444
@@ -65,6 +65,6 @@ services:
       DRUPAL_NIGHTWATCH_IGNORE_DIRECTORIES: node_modules,vendor,.*,sites/*/files,sites/*/private,sites/simpletest
       DRUPAL_NIGHTWATCH_OUTPUT: reports/nightwatch
       # DTT
-      DTT_BASE_URL: http://web
+      DTT_BASE_URL: *test_url
       DTT_MINK_DRIVER_ARGS: *web_driver_args
       MINK_DRIVER_ARGS: *web_driver_args

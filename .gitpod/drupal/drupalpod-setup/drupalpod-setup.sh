@@ -5,6 +5,7 @@ set -eu -o pipefail
 : "${DEBUG_SCRIPT:=}"
 : "${GITPOD_HEADLESS:=}"
 : "${DP_INSTALL_PROFILE:=}"
+: "${DP_CODING_STANDARDS:=Drupal,DrupalPractice}"
 : "${DP_INSTALL_SITENAME:=DrupalPod}"
 : "${DP_INSTALL_OPTIONS:=}"
 : "${DP_EXTRA_DEVEL:=}"
@@ -100,6 +101,9 @@ if [ ! -f "${GITPOD_REPO_ROOT}"/.drupalpod_initiated ]; then
 
     # ddev config auto updates settings.php and generates settings.ddev.php
     ddev config --auto
+
+    # Set the default codesniffer coding standards.
+    phpcs --config-set default_standard "$DP_CODING_STANDARDS"
 
     if [ -n "$DP_INSTALL_PROFILE" ] && [ "$DP_INSTALL_PROFILE" != "''" ]; then
         # New site install

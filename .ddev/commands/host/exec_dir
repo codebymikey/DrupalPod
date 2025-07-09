@@ -18,6 +18,12 @@ if [ "${DP_NORMALIZE_EXEC_ARGUMENTS-1}" = 1 ] && [ -n "${GITPOD_REPO_ROOT}" ]; t
   # This will ensure IDEs like PHPStorm can pass files into it without issue.
   arguments=()
   for arg in "$@"; do
+    if [ "${DP_NORMALIZE_EXEC_ARGUMENTS_TO_FULL_PATH:0}" = 1 ]; then
+      # Normalize relative paths to full paths.
+      if [ -e "$arg" ]; then
+        arg=$(realpath "$arg")
+      fi
+    fi
     new_arg="${arg//${GITPOD_REPO_ROOT}//var/www/html}"
     arguments+=("$new_arg")
   done
@@ -25,4 +31,9 @@ else
   arguments=("$@")
 fi
 
-ddev exec -d /var/www/html/"$(echo "$PWD" | cut -d'/' -f4-)" "${arguments[@]}"
+if [ "${DP_DDEV_EXEC_CHANGE_DIR-1}" = 1 ]; then
+  ddev exec -d /var/www/html/"$(echo "$PWD" | cut -d'/' -f4-)" "${arguments[@]}"
+else
+  # Call another ddev command directly.
+  ddev "${arguments[@]}"
+fi

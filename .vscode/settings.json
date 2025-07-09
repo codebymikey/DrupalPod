@@ -41,7 +41,7 @@
 
   /* phpSniffer settings */
   "phpSniffer.executablesFolder": "vendor/bin",
-  "phpSniffer.standard": "Drupal",
+  "phpSniffer.standard": "Drupal,DrupalPractice",
 
   /* php-docblocker settings */
   "php-docblocker.gap": true,

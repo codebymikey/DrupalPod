@@ -53,6 +53,9 @@ fi
 
 if [ -f "${GITPOD_REPO_ROOT}/web/core/phpunit.xml.dist" ] && [ ! -f "${GITPOD_REPO_ROOT}/web/phpunit.xml" ]; then
     # Update phpunit.xml
-    sed -E 's@(failOnWarning|displayDetailsOnTestsThatTriggerErrors|displayDetailsOnTestsThatTriggerWarnings|displayDetailsOnTestsThatTriggerDeprecations)="true"@\1="false"@' \
-        "${GITPOD_REPO_ROOT}/web/core/phpunit.xml.dist" > "${GITPOD_REPO_ROOT}/phpunit.xml"
+    sed -r '
+    s@(failOnWarning|displayDetailsOnTestsThatTriggerErrors|displayDetailsOnTestsThatTriggerWarnings|displayDetailsOnTestsThatTriggerDeprecations)="true"@\1="false"@;
+    s@bootstrap="tests/bootstrap.php"@bootstrap="web/core/tests/bootstrap.php"@;
+    ' \
+    "${GITPOD_REPO_ROOT}/web/core/phpunit.xml.dist" > "${GITPOD_REPO_ROOT}/phpunit.xml"
 fi

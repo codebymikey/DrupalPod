@@ -18,6 +18,13 @@ cd "$GITPOD_REPO_ROOT" && time ddev . composer create -n --no-install drupal/rec
 cp "$GITPOD_REPO_ROOT"/temp-composer-files/* "$GITPOD_REPO_ROOT"/.
 rm -rf "$GITPOD_REPO_ROOT"/temp-composer-files
 
+if [ "${DRUPAL_CORE_NO_RECOMMENDED:-}" = 1 ]; then
+    # Whether to relax the recommended dependency.
+    # This is useful when testing against older versions like Drupal 9.5.
+    # e.g. https://www.drupal.org/i/3527489
+    sed -i 's@"drupal/core-recommended": "@"drupal/core": "@' "${GITPOD_REPO_ROOT}/composer.json"
+fi
+
 # Programmatically fix Composer 2.2 allow-plugins to avoid errors
 ddev composer config --no-plugins allow-plugins.composer/installers true
 ddev composer config --no-plugins allow-plugins.drupal/core-project-message true
@@ -40,7 +47,7 @@ if [ "${INCLUDE_COMPOSER_MERGE-1}" = 1 ] && [ "$DP_PROJECT_TYPE" != "project_cor
         cd "${GITPOD_REPO_ROOT}" && time ddev . composer require wikimedia/composer-merge-plugin:2.1.0 --no-interaction --no-install
         cd "${GITPOD_REPO_ROOT}" && time ddev . composer config --no-plugins allow-plugins.wikimedia/composer-merge-plugin true
         # Add the composer.json and potential composer.libraries dependency.
-        cd "${GITPOD_REPO_ROOT}" && time ddev . composer config --json extra.merge-plugin.include '["\"repos/'"$DP_PROJECT_NAME"'/composer.json\", \"repos/'"$DP_PROJECT_NAME"'/composer.libraries.json\""]'
+        cd "${GITPOD_REPO_ROOT}" && time ddev . composer config --json extra.merge-plugin.include '["repos/'"$DP_PROJECT_NAME"'/composer.json", "repos/'"$DP_PROJECT_NAME"'/composer.libraries.json"]'
     fi
 fi
 

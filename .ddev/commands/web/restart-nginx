@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Restarts nginx
+## Usage: restart-nginx
+## Example: "ddev restart-nginx"
+
+if [ -f /mnt/ddev_config/nginx_full/nginx-site.conf ]; then
+  cp /mnt/ddev_config/nginx_full/nginx-site.conf /etc/nginx/sites-enabled/nginx-site.conf
+fi
+
+nginx -t && nginx -s reload

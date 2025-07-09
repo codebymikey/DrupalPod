@@ -8,8 +8,10 @@ composer.json
 composer.lock
 .editorconfig
 .gitattributes
+/.cspell.json
 /phpunit.xml
 /phpcs.xml
+/recipes
 /repos/drupal/core/pnpm
 /repos/drupal/core/pnpx
 /repos/drupal/core/yarn
@@ -25,4 +27,6 @@ src/**/out/
 src/**/*.vsix
 src/**/.vscode-test/
 drush/
+.ddev/.env
 .ddev/config.gitpod.yaml
+.ddev/docker-compose.drupalci.yaml
